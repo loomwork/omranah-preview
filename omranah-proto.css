@@ -300,10 +300,11 @@ a { color: var(--teal-press); }
 .priv-row:last-child { border-block-end: 0; }
 .priv-row .what { font-size: .9rem; font-weight: 600; }
 .priv-row .who { display: block; font-size: .76rem; color: var(--body-c); font-weight: 400; }
-.switch { position: relative; inline-size: 42px; block-size: 24px; flex: 0 0 auto; }
+/* interactive box ≥44px wide; the 42×24 visual track centers inside it */
+.switch { position: relative; inline-size: 48px; block-size: 32px; flex: 0 0 auto; }
 .switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
 .switch .track {
-  position: absolute; inset: 0; border-radius: 999px; background: var(--line);
+  position: absolute; inset: 4px 3px; border-radius: 999px; background: var(--line);
   transition: background .15s ease;
 }
 .switch .track::after {
@@ -533,7 +534,8 @@ footer .status { margin-inline-start: auto; }
 .foot { background: var(--ink); color: rgba(255,255,255,.88); font-size: .9rem; }
 .foot .wrap { padding-block: 3rem 1.5rem; }
 .f-grid { display: grid; gap: 2rem; padding-block-end: 2.2rem; }
-@media (min-width: 48rem) { .f-grid { grid-template-columns: 1.3fr 1fr 1fr 1fr; gap: 2.5rem; } }
+@media (min-width: 40rem) { .f-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 64rem) { .f-grid { grid-template-columns: 1.3fr 1fr 1fr 1fr; gap: 2.5rem; } }
 .f-brand .brand { color: #fff; margin-block-end: .8rem; }
 .f-brand .brand svg path { fill: var(--teal); }
 .f-brand p { color: rgba(255,255,255,.72); font-size: .88rem; max-width: 26em; }
@@ -550,6 +552,7 @@ footer .status { margin-inline-start: auto; }
   font-size: .64rem; font-weight: 600; text-transform: uppercase; letter-spacing: .1em;
   border: 1px solid rgba(255,255,255,.25); border-radius: 999px; padding: .1em .55em;
   margin-inline-start: .45em;
+  white-space: nowrap; display: inline-block; /* a pill must never break mid-border */
 }
 .f-bottom {
   border-block-start: 1px solid rgba(255,255,255,.14);
@@ -575,7 +578,7 @@ footer .status { margin-inline-start: auto; }
 .pkg .pkg-match { font-size: .8rem; color: var(--teal-press); font-weight: 600; }
 .pkg .pkg-grid { display: grid; gap: .6rem; }
 @media (min-width: 40rem) { .pkg .pkg-grid { grid-template-columns: 2fr 1fr 1fr; } }
-.pp-summary { position: sticky; inset-block-start: 1.2rem; }
+@media (min-width: 56rem) { .pp-summary { position: sticky; inset-block-start: 1.2rem; } }
 .pp-summary .q-line { font-size: .9rem; }
 .pp-post-state { margin-block-start: .6rem; font-size: .86rem; color: var(--teal-press); font-weight: 600; }
 
@@ -803,3 +806,44 @@ a.aud-card:hover .go::after, a.aud-card:focus-visible .go::after { opacity: 1; }
 @media (min-width: 40rem) { .pr-stats { grid-template-columns: repeat(3, minmax(0,14rem)); } }
 .pr-stats .stat-c { background: rgba(255,255,255,.94); color: var(--ink); border-color: transparent; }
 .pr-stats .stat-c .l { color: var(--body-c); }
+
+/* ---------- mobile pass (audit 2026-08-10) ----------
+   Two root causes fixed here: the header row could not wrap, and grid
+   children kept min-width:auto so table scroll-wrappers never engaged. */
+
+/* grid children may shrink; overflow wrappers inside them now work */
+.promise .wrap > * { min-width: 0; }
+.stage > .ob-card { min-width: 0; }
+
+/* header: wrap into brand row + full-width link row on small screens */
+@media (max-width: 52rem) {
+  .top .wrap { flex-wrap: wrap; row-gap: .35rem; }
+  .top nav { order: 5; flex-basis: 100%; }
+  .top nav a { padding: .6em .7em; }
+  .nav-dd summary { padding: .6em .7em; }
+}
+
+/* the Industries dropdown becomes an in-flow accordion: it can never clip */
+@media (max-width: 48rem) {
+  .nav-dd { position: static; flex-basis: 100%; }
+  .nav-dd .dd-panel {
+    position: static; width: 100%;
+    grid-template-columns: 1fr 1fr;
+    margin-block: .4rem .2rem;
+    box-shadow: none;
+  }
+  .top nav .dd-panel a { padding: .7em .6em; }
+}
+
+/* app bar: chips wrap as rows instead of breaking mid-pill */
+.app-bar .wrap { flex-wrap: wrap; row-gap: .4rem; }
+.app-bar .who-chip { white-space: nowrap; max-inline-size: 100%; overflow: hidden; }
+.app-bar .who-chip b { overflow: hidden; text-overflow: ellipsis; min-inline-size: 0; }
+.app-bar .demo-chip { white-space: nowrap; }
+
+@media (max-width: 40rem) {
+  .tick-label { font-size: .58rem; padding-inline: .8rem .5rem; }
+  /* dense tables scroll inside their wrappers instead of triple-wrapping */
+  .cmp td, .rq td { white-space: nowrap; }
+  .band-label { font-size: .62rem; padding-inline-end: 2.5rem; }
+}
