@@ -847,3 +847,20 @@ a.aud-card:hover .go::after, a.aud-card:focus-visible .go::after { opacity: 1; }
   .cmp td, .rq td { white-space: nowrap; }
   .band-label { font-size: .62rem; padding-inline-end: 2.5rem; }
 }
+
+/* phones: the industry grid becomes a swipe carousel (one card tall instead
+   of ~15 screens of scrolling); snap per tile, bleeding to the screen edges */
+@media (max-width: 40rem) {
+  .ind-grid {
+    grid-auto-flow: column;
+    grid-auto-columns: 74%;
+    grid-template-columns: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline-start: 1.25rem;
+    margin-inline: -1.25rem;
+    padding-inline: 1.25rem;
+    padding-block-end: .6rem;
+  }
+  .ind-grid > * { scroll-snap-align: start; }
+}
